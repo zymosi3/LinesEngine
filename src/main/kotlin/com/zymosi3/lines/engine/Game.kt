@@ -4,7 +4,6 @@ import java.util.ArrayList
 import java.util.Random
 import java.util.LinkedList
 import java.util.HashSet
-import kotlin.browser.document
 
 public enum class Color {
     red
@@ -181,21 +180,21 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
             else
                 purgeLine(line)
         }
-        // going row by row
+        // passing row by row
         for (i in 0..field.size - 1) {
             val line: MutableList<Cell> = LinkedList()
             for (j in 0..field.size - 1)
                 addToLine(field.cell(j, i) as Cell, line)
             purgeLine(line)
         }
-        // going column by column
+        // passing column by column
         for (i in 0..field.size - 1) {
             val line: MutableList<Cell> = LinkedList()
             for (j in 0..field.size - 1)
                 addToLine(field.cell(i, j) as Cell, line)
             purgeLine(line)
         }
-        // going diagonals from right to left
+        // passing diagonals from left top corner to bottom \
         for (k in 0..field.size - 1) {
             val line: MutableList<Cell> = LinkedList()
             for (l in 0..field.size - 1 - k) {
@@ -205,6 +204,7 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
             }
             purgeLine(line)
         }
+        // passing diagonals from left top corner to right \
         for (k in 1..field.size - 1) {
             val line: MutableList<Cell> = LinkedList()
             for (l in k..field.size - 1) {
@@ -214,7 +214,7 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
             }
             purgeLine(line)
         }
-        // going diagonals from left to right
+        // passing diagonals from left top corner to right /
         for (k in 0..field.size - 1) {
             val line: MutableList<Cell> = LinkedList()
             for (l in k downTo 0) {
@@ -224,6 +224,7 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
             }
             purgeLine(line)
         }
+        // passing diagonals from right top corner to bottom /
         for (k in 1..field.size - 1) {
             val line: MutableList<Cell> = LinkedList()
             for (l in field.size - 1 downTo k) {
