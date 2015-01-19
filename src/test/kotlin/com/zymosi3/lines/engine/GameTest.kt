@@ -11,7 +11,7 @@ import kotlin.test.assertNotNull
 public class GameTest {
 
     val size = 9
-    val startBalls = 6
+    val startBalls = 3
     val seed = 42L
 
     test fun createGameTest() {
@@ -57,7 +57,7 @@ public class GameTest {
         assertEquals(3, game.free.size())
         assertEquals(78, game.occupied.size())
         assertEquals(0, game.currentScore)
-        assertEquals(25, game.movesNum)
+        assertEquals(26, game.movesNum)
     }
 
     test fun moveTest() {
