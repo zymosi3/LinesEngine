@@ -9,8 +9,8 @@ public enum class Color {
     red
     blue
     green
-    yellow
-    purple
+    gold
+    indigo
     aqua
     burgundy
 }
