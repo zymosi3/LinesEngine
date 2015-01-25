@@ -141,18 +141,21 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
             }
         }
 
-        fun isLegal(from: Cell, to: Cell, explored: MutableCollection<Cell>, toExplore: MutableList<Pair<Cell, Direction>>): Boolean {
-            if (from == to)
+        var cur = from
+        val explored = HashSet(occupied)
+        val toExplore = LinkedList<Pair<Cell, Direction>>()
+
+        while (true) {
+            if (cur == to)
                 return true
-            explored.add(from)
-            explore(from, explored, toExplore)
+            explored.add(cur)
+            explore(cur, explored, toExplore)
             if (toExplore.isEmpty())
                 return false
             val next = toExplore.get(0)
             toExplore.remove(0)
-            return isLegal(field.cell(next.first, next.second) as Cell, to, explored, toExplore)
+            cur = field.cell(next.first, next.second) as Cell
         }
-        return isLegal(from, to, HashSet(occupied), LinkedList())
     }
 
     private fun purge(): Set<Cell> {
