@@ -72,7 +72,7 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
     public val field: Field = Field(size)
     public var nextBalls: List<Ball> = emptyList()
         private set
-    public var currentScore: Int = 0
+    public var score: Int = 0
         private set
     public var movesNum:Int = 0
         private set
@@ -102,10 +102,10 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
             val purged = purge()
             if (purged.isNotEmpty()) {
                 // update score
-                currentScore += minLineSize
+                score += minLineSize
                 if (purged.size() > minLineSize) {
                     for (i in minLineSize + 1..purged.size()) {
-                        currentScore += (i - minLineSize) * (i - minLineSize + 1)
+                        score += (i - minLineSize) * (i - minLineSize + 1)
                     }
                 }
             }
@@ -180,8 +180,10 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
                     line.clear()
                     line.add(0, cell)
                 }
-            else
+            else {
                 purgeLine(line)
+                line.clear()
+            }
         }
         // passing row by row
         for (i in 0..field.size - 1) {

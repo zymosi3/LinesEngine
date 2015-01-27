@@ -18,7 +18,7 @@ public class GameTest {
         val game = Game(size, startBalls, seed)
         assertEquals(size, game.field.size)
         assertTrue(game.nextBalls.isEmpty())
-        assertEquals(0, game.currentScore)
+        assertEquals(0, game.score)
         assertTrue(game.occupied.isEmpty())
         assertEquals(size * size, game.free.size())
     }
@@ -30,7 +30,7 @@ public class GameTest {
         assertTrue(res.purged.isEmpty())
         assertFalse(res.gameFinished)
         assertEquals(3, game.nextBalls.size())
-        assertEquals(0, game.currentScore)
+        assertEquals(0, game.score)
         assertEquals(startBalls, game.occupied.size())
         assertEquals(size * size - startBalls, game.free.size())
     }
@@ -56,7 +56,7 @@ public class GameTest {
         assertTrue(res.gameFinished)
         assertEquals(3, game.free.size())
         assertEquals(78, game.occupied.size())
-        assertEquals(0, game.currentScore)
+        assertEquals(0, game.score)
         assertEquals(26, game.movesNum)
     }
 
@@ -104,7 +104,27 @@ public class GameTest {
         assertTrue(res.success)
         assertEquals(5, res.purged.size())
         assertFalse(res.gameFinished)
-        assertEquals(5, game.currentScore)
+        assertEquals(5, game.score)
+    }
+
+    test fun purgeRowFailTest() {
+        val game = Game(size, startBalls, seed)
+        game.start()
+        val field = game.field
+        val line = listOf(field.cell(1, 2), field.cell(2, 2), field.cell(3, 2), field.cell(6, 2))
+        for (cell in line) {
+            cell?.ball = Ball(Color.blue)
+            game.occupied.add(cell as Cell)
+            game.free.remove(cell)
+        }
+        val from = field.cell(3, 3) as Cell
+        val to = field.cell(5, 2) as Cell
+        val res = game.move(from, to)
+
+        assertTrue(res.success)
+        assertEquals(0, res.purged.size())
+        assertFalse(res.gameFinished)
+        assertEquals(0, game.score)
     }
 
     test fun scoreTest() {
@@ -124,14 +144,14 @@ public class GameTest {
         assertTrue(res.success)
         assertEquals(8, res.purged.size())
         assertFalse(res.gameFinished)
-        assertEquals(25, game.currentScore)
+        assertEquals(25, game.score)
     }
 
     test fun purgeColumnTest() {
         val game = Game(size, startBalls, seed)
         game.start()
         val field = game.field
-        val line = listOf(field.cell(4, 0), field.cell(4, 1), field.cell(4, 2), field.cell(4, 5))
+        val line = listOf(field.cell(4, 0), field.cell(4, 1), field.cell(4, 2), field.cell(4, 4))
         for (cell in line) {
             cell?.ball = Ball(Color.blue)
             game.occupied.add(cell as Cell)
@@ -144,7 +164,7 @@ public class GameTest {
         assertTrue(res.success)
         assertEquals(5, res.purged.size())
         assertFalse(res.gameFinished)
-        assertEquals(5, game.currentScore)
+        assertEquals(5, game.score)
     }
 
     test fun purgeDiagonalTest1() {
@@ -164,7 +184,7 @@ public class GameTest {
         assertTrue(res.success)
         assertEquals(5, res.purged.size())
         assertFalse(res.gameFinished)
-        assertEquals(5, game.currentScore)
+        assertEquals(5, game.score)
     }
 
     test fun purgeDiagonalTest2() {
@@ -184,7 +204,7 @@ public class GameTest {
         assertTrue(res.success)
         assertEquals(5, res.purged.size())
         assertFalse(res.gameFinished)
-        assertEquals(5, game.currentScore)
+        assertEquals(5, game.score)
     }
 
     test fun purgeDiagonalTest3() {
@@ -204,7 +224,7 @@ public class GameTest {
         assertTrue(res.success)
         assertEquals(6, res.purged.size())
         assertFalse(res.gameFinished)
-        assertEquals(7, game.currentScore)
+        assertEquals(7, game.score)
     }
 
     test fun purgeDiagonalTest4() {
@@ -224,7 +244,7 @@ public class GameTest {
         assertTrue(res.success)
         assertEquals(5, res.purged.size())
         assertFalse(res.gameFinished)
-        assertEquals(5, game.currentScore)
+        assertEquals(5, game.score)
     }
 }
 
