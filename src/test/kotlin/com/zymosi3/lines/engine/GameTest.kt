@@ -255,8 +255,8 @@ public class GameTest {
 
         game.move(from, to)
 
-        val snapshot = game.snapshot()
-        val restoredGame = restore(snapshot)
+        val snapshot = String(game.snapshot())
+        val restoredGame = restore(snapshot.toByteArray())
 
         assertEquals(game.score, restoredGame.score)
         assertEquals(game.movesNum, restoredGame.movesNum)
