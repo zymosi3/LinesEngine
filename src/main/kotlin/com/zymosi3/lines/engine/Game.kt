@@ -35,7 +35,7 @@ public class Field(val size: Int) :  Iterable<Cell> {
     internal val cells: List<Cell> = Array(size * size, {i -> Cell(i / size, i % size)}).toList()
     private val cellsMap: Map<Pair<Int, Int>, Cell> = cells.toMap({cell -> Pair(cell.x, cell.y)})
 
-    public fun cell(x: Int, y: Int): Cell? = cellsMap.get(Pair(x, y))
+    public fun cell(x: Int, y: Int): Cell? = cellsMap[Pair(x, y)]
 
     public fun left(cell: Cell): Cell? = cell(cell.x - 1, cell.y)
 
@@ -152,7 +152,7 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
             explore(cur, explored, toExplore)
             if (toExplore.isEmpty())
                 return false
-            val next = toExplore.get(0)
+            val next = toExplore[0]
             toExplore.remove(0)
             cur = field.cell(next.first, next.second) as Cell
         }
@@ -171,7 +171,7 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
                 if (line.isEmpty())
                     // no matter what color, line is empty
                     line.add(0, cell)
-                else if (line.get(0).ball?.color == cell.ball?.color)
+                else if (line[0].ball?.color == cell.ball?.color)
                     // line is not empty we need the same color
                     line.add(0, cell)
                 else {
@@ -250,7 +250,7 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
 
     private fun putRandom(ball: Ball) {
         val index = rand.nextInt(free.size())
-        val cell = free.get(index)
+        val cell = free[index]
         cell.ball = ball
         free.remove(index)
         occupied.add(cell)
@@ -258,7 +258,7 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
 
     private fun defineNextBalls(): List<Ball> = Array(nextBallsCount, {i -> Ball(randColor())}).toList()
 
-    private fun randColor(): Color = Color.values().get(rand.nextInt(Color.values().size()))
+    private fun randColor(): Color = Color.values()[rand.nextInt(Color.values().size())]
 }
 
 

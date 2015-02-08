@@ -40,8 +40,8 @@ public class GameTest {
         game.start()
         val rand = Random(seed)
         fun randomMove(): MoveResult = game.move(
-                game.occupied.get(rand.nextInt(game.occupied.size())),
-                game.free.get(rand.nextInt(game.free.size()))
+                game.occupied[rand.nextInt(game.occupied.size())],
+                game.free[rand.nextInt(game.free.size())]
         )
         var res: MoveResult
         while (true) {
