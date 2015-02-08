@@ -4,15 +4,17 @@ import java.util.ArrayList
 import java.util.Random
 import java.util.LinkedList
 import java.util.HashSet
+import java.io.ByteArrayOutputStream
+import java.io.ByteArrayInputStream
 
-public enum class Color {
-    red
-    blue
-    green
-    gold
-    indigo
-    aqua
-    burgundy
+public enum class Color(public val index: Int) {
+    red : Color(0)
+    blue : Color(1)
+    green : Color(2)
+    gold : Color(3)
+    indigo : Color(4)
+    aqua : Color(5)
+    burgundy : Color(6)
 }
 
 public class Ball(val color: Color)
@@ -62,20 +64,50 @@ public data class MoveResult(
         val gameFinished: Boolean
 )
 
-public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
+public fun restore(snapshot: ByteArray): Game {
+    val stream = ByteArrayInputStream(snapshot)
+    stream.use {
+        val reader = stream.reader()
+        reader.use {
+            val size = reader.read()
+            val game = Game(size)
+            val occupiedSize = reader.read()
+            for (i in 1..occupiedSize) {
+                val x = reader.read()
+                val y = reader.read()
+                val color = Color.values()[reader.read()]
+                val cell = game.field.cell(x, y) as Cell
+                cell.ball = Ball(color)
+                game.occupied.add(cell)
+                game.free.remove(cell)
+            }
+            val nextBallsSize = reader.read()
+            val nextBalls = ArrayList<Ball>(nextBallsSize)
+            for (i in 1.. nextBallsSize) {
+                val color = Color.values()[reader.read()]
+                nextBalls.add(Ball(color))
+            }
+            game.nextBalls = nextBalls
+            game.score = reader.read()
+            game.movesNum = reader.read()
+            return game
+        }
+    }
+}
+
+public class Game(size: Int, randomSeed: Long? = null) {
 
     // constants
     private val nextBallsCount = 3
     private val minLineSize = 5
 
-    private val startBalls: Int = startBalls
     public val field: Field = Field(size)
     public var nextBalls: List<Ball> = emptyList()
-        private set
+        internal set
     public var score: Int = 0
-        private set
+        internal set
     public var movesNum:Int = 0
-        private set
+        internal set
 
     internal val occupied: MutableList<Cell> = LinkedList()
     internal val free: MutableList<Cell> = LinkedList(field.cells)
@@ -83,7 +115,7 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
     private val rand: Random = if (randomSeed != null) Random(randomSeed) else Random()
 
     public fun start(): MoveResult {
-        for (i in 1..startBalls) {
+        for (i in 1..nextBallsCount) {
             putRandom(Ball(randColor()))
         }
         nextBalls = defineNextBalls()
@@ -128,6 +160,29 @@ public class Game(size: Int, startBalls: Int, randomSeed: Long? = null) {
         } else {
             // illegal move
             return MoveResult(false, emptySet(), free.size() <= nextBalls.size())
+        }
+    }
+
+    public fun snapshot(): ByteArray {
+        val stream = ByteArrayOutputStream()
+        stream.use {
+            val writer = stream.writer()
+            writer.use {
+                writer.write(field.size)
+                writer.write(occupied.size())
+                for (cell in occupied) {
+                    writer.write(cell.x)
+                    writer.write(cell.y)
+                    writer.write(cell.ball?.color?.index as Int)
+                }
+                writer.write(nextBalls.size())
+                for (ball in nextBalls) {
+                    writer.write(ball.color.index)
+                }
+                writer.write(score)
+                writer.write(movesNum)
+            }
+            return stream.toByteArray()
         }
     }
 

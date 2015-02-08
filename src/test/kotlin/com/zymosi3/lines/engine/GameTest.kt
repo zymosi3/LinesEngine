@@ -11,11 +11,10 @@ import kotlin.test.assertNotNull
 public class GameTest {
 
     val size = 9
-    val startBalls = 3
     val seed = 42L
 
     test fun createGameTest() {
-        val game = Game(size, startBalls, seed)
+        val game = Game(size, seed)
         assertEquals(size, game.field.size)
         assertTrue(game.nextBalls.isEmpty())
         assertEquals(0, game.score)
@@ -24,19 +23,19 @@ public class GameTest {
     }
 
     test fun startGameTest() {
-        val game = Game(size, startBalls, seed)
+        val game = Game(size, seed)
         val res = game.start()
         assertTrue(res.success)
         assertTrue(res.purged.isEmpty())
         assertFalse(res.gameFinished)
         assertEquals(3, game.nextBalls.size())
         assertEquals(0, game.score)
-        assertEquals(startBalls, game.occupied.size())
-        assertEquals(size * size - startBalls, game.free.size())
+        assertEquals(3, game.occupied.size())
+        assertEquals(size * size - 3, game.free.size())
     }
 
     test fun finishGameTest() {
-        val game = Game(size, startBalls, seed)
+        val game = Game(size, seed)
         game.start()
         val rand = Random(seed)
         fun randomMove(): MoveResult = game.move(
@@ -61,7 +60,7 @@ public class GameTest {
     }
 
     test fun moveTest() {
-        val game = Game(size, startBalls, seed)
+        val game = Game(size, seed)
         game.start()
         val field = game.field
         val from = field.cell(3, 3) as Cell
@@ -88,7 +87,7 @@ public class GameTest {
     }
 
     test fun purgeRowTest() {
-        val game = Game(size, startBalls, seed)
+        val game = Game(size, seed)
         game.start()
         val field = game.field
         val line = listOf(field.cell(1, 2), field.cell(2, 2), field.cell(3, 2), field.cell(4, 2))
@@ -108,7 +107,7 @@ public class GameTest {
     }
 
     test fun purgeRowFailTest() {
-        val game = Game(size, startBalls, seed)
+        val game = Game(size, seed)
         game.start()
         val field = game.field
         val line = listOf(field.cell(1, 2), field.cell(2, 2), field.cell(3, 2), field.cell(6, 2))
@@ -128,7 +127,7 @@ public class GameTest {
     }
 
     test fun scoreTest() {
-        val game = Game(size, startBalls, seed)
+        val game = Game(size, seed)
         game.start()
         val field = game.field
         val line = listOf(field.cell(1, 2), field.cell(2, 2), field.cell(3, 2), field.cell(4, 2), field.cell(6, 2), field.cell(7, 2), field.cell(8, 2))
@@ -148,7 +147,7 @@ public class GameTest {
     }
 
     test fun purgeColumnTest() {
-        val game = Game(size, startBalls, seed)
+        val game = Game(size, seed)
         game.start()
         val field = game.field
         val line = listOf(field.cell(4, 0), field.cell(4, 1), field.cell(4, 2), field.cell(4, 4))
@@ -168,7 +167,7 @@ public class GameTest {
     }
 
     test fun purgeDiagonalTest1() {
-        val game = Game(size, startBalls, seed)
+        val game = Game(size, seed)
         game.start()
         val field = game.field
         val line = listOf(field.cell(0, 2), field.cell(1, 3), field.cell(2, 4), field.cell(4, 6))
@@ -188,7 +187,7 @@ public class GameTest {
     }
 
     test fun purgeDiagonalTest2() {
-        val game = Game(size, startBalls, seed)
+        val game = Game(size, seed)
         game.start()
         val field = game.field
         val line = listOf(field.cell(4, 1), field.cell(5, 2), field.cell(6, 3), field.cell(8, 5))
@@ -208,7 +207,7 @@ public class GameTest {
     }
 
     test fun purgeDiagonalTest3() {
-        val game = Game(size, startBalls, seed)
+        val game = Game(size, seed)
         game.start()
         val field = game.field
         val line = listOf(field.cell(6, 2), field.cell(5, 3), field.cell(4, 4), field.cell(2, 6), field.cell(1, 7))
@@ -228,7 +227,7 @@ public class GameTest {
     }
 
     test fun purgeDiagonalTest4() {
-        val game = Game(size, startBalls, seed)
+        val game = Game(size, seed)
         game.start()
         val field = game.field
         val line = listOf(field.cell(8, 4), field.cell(7, 5), field.cell(5, 7), field.cell(4, 8))
@@ -245,6 +244,44 @@ public class GameTest {
         assertEquals(5, res.purged.size())
         assertFalse(res.gameFinished)
         assertEquals(5, game.score)
+    }
+
+    test fun snapshotTest() {
+        var game = Game(size, seed)
+        game.start()
+        val field = game.field
+        val from = field.cell(3, 3) as Cell
+        val to = field.cell(5, 2) as Cell
+
+        game.move(from, to)
+
+        val snapshot = game.snapshot()
+        val restoredGame = restore(snapshot)
+
+        assertEquals(game.score, restoredGame.score)
+        assertEquals(game.movesNum, restoredGame.movesNum)
+        assertEquals(game.occupied.size(), restoredGame.occupied.size())
+        for (i in 0..game.occupied.size() - 1) {
+            assertEquals(game.occupied[i].x, restoredGame.occupied[i].x)
+            assertEquals(game.occupied[i].y, restoredGame.occupied[i].y)
+            assertEquals(game.occupied[i].ball?.color, restoredGame.occupied[i].ball?.color)
+        }
+
+        assertEquals(game.free.size(), restoredGame.free.size())
+        for (cell in restoredGame.occupied) {
+            assertFalse(restoredGame.free.contains(cell))
+        }
+
+        for (cell in restoredGame.free) {
+            assertFalse(restoredGame.occupied.contains(cell))
+        }
+
+        for (x in 0..game.field.size - 1)
+            for (y in 0..game.field.size - 1) {
+                val cell = game.field.cell(x, y)
+                val restoredCell = restoredGame.field.cell(x, y)
+                assertEquals(cell?.ball?.color, restoredCell?.ball?.color)
+            }
     }
 }
 
