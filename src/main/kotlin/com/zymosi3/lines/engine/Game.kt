@@ -8,13 +8,13 @@ import java.io.ByteArrayOutputStream
 import java.io.ByteArrayInputStream
 
 public enum class Color(public val index: Int) {
-    red : Color(0)
-    blue : Color(1)
-    green : Color(2)
-    gold : Color(3)
-    indigo : Color(4)
-    aqua : Color(5)
-    burgundy : Color(6)
+    red(0),
+    blue(1),
+    green(2),
+    gold(3),
+    indigo(4),
+    aqua(5),
+    burgundy(6)
 }
 
 public class Ball(val color: Color)
@@ -26,10 +26,10 @@ public class Cell(val x: Int, val y: Int) {
 }
 
 public enum class Direction {
-    left
-    right
-    top
-    bot
+    left,
+    right,
+    top,
+    bot,
 }
 
 public class Field(val size: Int) :  Iterable<Cell> {

@@ -13,9 +13,7 @@ version = release.projectVersion
 
 // configure dependencies for using kotlin plugin
 buildscript {
-	ext {
-		kotlinVersion = '0.10.195'
-	}
+	ext.kotlinVersion = '0.13.1513'
 
 	repositories {
 		mavenCentral()
@@ -36,4 +34,7 @@ repositories {
 dependencies {
 	compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 	testCompile 'junit:junit:4.11'
+}
+sourceSets {
+	main.java.srcDirs += 'src/main/kotlin'
 }

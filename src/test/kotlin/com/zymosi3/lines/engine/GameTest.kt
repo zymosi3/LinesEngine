@@ -13,7 +13,7 @@ public class GameTest {
     val size = 9
     val seed = 42L
 
-    test fun createGameTest() {
+    @test fun createGameTest() {
         val game = Game(size, seed)
         assertEquals(size, game.field.size)
         assertTrue(game.nextBalls.isEmpty())
@@ -22,7 +22,7 @@ public class GameTest {
         assertEquals(size * size, game.free.size())
     }
 
-    test fun startGameTest() {
+    @test fun startGameTest() {
         val game = Game(size, seed)
         val res = game.start()
         assertTrue(res.success)
@@ -34,7 +34,7 @@ public class GameTest {
         assertEquals(size * size - 3, game.free.size())
     }
 
-    test fun finishGameTest() {
+    @test fun finishGameTest() {
         val game = Game(size, seed)
         game.start()
         val rand = Random(seed)
@@ -59,7 +59,7 @@ public class GameTest {
         assertEquals(26, game.movesNum)
     }
 
-    test fun moveTest() {
+    @test fun moveTest() {
         val game = Game(size, seed)
         game.start()
         val field = game.field
@@ -86,7 +86,7 @@ public class GameTest {
         assertNotNull(to.ball)
     }
 
-    test fun purgeRowTest() {
+    @test fun purgeRowTest() {
         val game = Game(size, seed)
         game.start()
         val field = game.field
@@ -106,7 +106,7 @@ public class GameTest {
         assertEquals(5, game.score)
     }
 
-    test fun purgeRowFailTest() {
+    @test fun purgeRowFailTest() {
         val game = Game(size, seed)
         game.start()
         val field = game.field
@@ -126,7 +126,7 @@ public class GameTest {
         assertEquals(0, game.score)
     }
 
-    test fun scoreTest() {
+    @test fun scoreTest() {
         val game = Game(size, seed)
         game.start()
         val field = game.field
@@ -146,7 +146,7 @@ public class GameTest {
         assertEquals(25, game.score)
     }
 
-    test fun purgeColumnTest() {
+    @test fun purgeColumnTest() {
         val game = Game(size, seed)
         game.start()
         val field = game.field
@@ -166,7 +166,7 @@ public class GameTest {
         assertEquals(5, game.score)
     }
 
-    test fun purgeDiagonalTest1() {
+    @test fun purgeDiagonalTest1() {
         val game = Game(size, seed)
         game.start()
         val field = game.field
@@ -186,7 +186,7 @@ public class GameTest {
         assertEquals(5, game.score)
     }
 
-    test fun purgeDiagonalTest2() {
+    @test fun purgeDiagonalTest2() {
         val game = Game(size, seed)
         game.start()
         val field = game.field
@@ -206,7 +206,7 @@ public class GameTest {
         assertEquals(5, game.score)
     }
 
-    test fun purgeDiagonalTest3() {
+    @test fun purgeDiagonalTest3() {
         val game = Game(size, seed)
         game.start()
         val field = game.field
@@ -226,7 +226,7 @@ public class GameTest {
         assertEquals(7, game.score)
     }
 
-    test fun purgeDiagonalTest4() {
+    @test fun purgeDiagonalTest4() {
         val game = Game(size, seed)
         game.start()
         val field = game.field
@@ -246,7 +246,7 @@ public class GameTest {
         assertEquals(5, game.score)
     }
 
-    test fun snapshotTest() {
+    @test fun snapshotTest() {
         var game = Game(size, seed)
         game.start()
         val field = game.field
